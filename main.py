@@ -11,13 +11,18 @@ from datetime import datetime
 import asyncio
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
-APK_URL = os.environ.get("APK_URL")
+
+# ================= UPDATED DIRECT URLS =================
+APK_URL = "https://raw.githubusercontent.com/loda26616-a11y/BK/73f42a3a4a6ac88d784a3513be0a7884a6309358/JAI~CLUB%20VIP%20H%40CK_1.0_e.apk"
+
+WELCOME_VIDEO_URL = "https://raw.githubusercontent.com/loda26616-a11y/Idk/bad5da7cb0ea4b890390dde535e6c8100cf54318/vid-20260421-120333-320_pAPAEC87.mp4"
+
 VIP_CHANNEL_URL = os.environ.get("VIP_CHANNEL_URL")
 BOT_USERNAME = os.environ.get("BOT_USERNAME")
 LEAVE_MSG_URL = os.environ.get("LEAVE_MSG_URL")
 
 USERS_FILE = "users.json"
-WELCOME_IMAGE_URL = "https://kommodo.ai/i/lk66ZvAY1u3vzHXU9aLN"
+
 LEAVE_IMAGE_URL = "https://kommodo.ai/i/UTlTK3RUQvuCGsM1aCLS"
 
 APK_CACHE = None
@@ -54,11 +59,10 @@ def add_user(user, users):
 def fetch_apk():
     global APK_CACHE
     try:
-        if APK_URL:
-            res = requests.get(APK_URL, timeout=120)
-            res.raise_for_status()
-            APK_CACHE = res.content
-            print("APK cached ✅")
+        res = requests.get(APK_URL, timeout=120)
+        res.raise_for_status()
+        APK_CACHE = res.content
+        print("APK cached ✅")
     except Exception as e:
         print("APK error:", e)
 
@@ -73,12 +77,12 @@ async def send_apk(user_id, context):
     ])
 
     file = BytesIO(APK_CACHE)
-    file.name = "jai club premium.apk"
+    file.name = "jai_club_premium.apk"
 
     await context.bot.send_document(
         chat_id=user_id,
         document=file,
-        filename="jai club premium.apk",
+        filename="jai_club_premium.apk",
         caption=(
             "✅ 100% BEST APK IN WHOLE TELEGRAM 💥\n\n"
             "( ONLY FOR PREMIUM USERS ⚡️ )\n\n"
@@ -101,9 +105,10 @@ async def join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton("🔥 VIP CHANNEL LINK 🔥", url=VIP_CHANNEL_URL)]
         ])
 
-        await context.bot.send_photo(
+        # ================= VIDEO WELCOME =================
+        await context.bot.send_video(
             chat_id=user.id,
-            photo=WELCOME_IMAGE_URL,
+            video=WELCOME_VIDEO_URL,
             caption="🚀🔥 WELCOME TO BK TRADERS PREMIUM BOT 🔥",
             reply_markup=btn
         )
@@ -172,6 +177,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ================= MAIN =================
 def main():
     fetch_apk()
+
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(ChatJoinRequestHandler(join_request))
@@ -179,6 +185,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("broadcast", broadcast))
 
+    print("Bot running ✅")
     app.run_polling()
 
 
